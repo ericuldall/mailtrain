@@ -29,6 +29,8 @@ const { uploadedFilesDir } = require('./lib/file-helpers');
 const { reportFilesDir } = require('./lib/report-helpers');
 const { filesDir } = require('./models/files');
 
+const replicaTypes = config.replicaTypes || false;
+
 const trustedPort = config.www.trustedPort;
 const sandboxPort = config.www.sandboxPort;
 const publicPort = config.www.publicPort;
@@ -125,6 +127,28 @@ async function init() {
     appBuilder.setReady();
 }
 
-init().catch(err => {log.error('', err); process.exit(1); });
+async function replicaInit (types) {
+    const AppTypeMap = {
+      'trusted': AppType.TRUSTED,
+      'sandbox': AppType.SANDBOXED,
+      'public': AppType.PUBLIC
+    };
+    const AppPortMap = {
+      'trusted': trustedPort,
+      'sandbox': sandboxPort,
+      'public': publicPort
+    };
+    for (let type of types) {
+      await startHTTPServer(AppTypeMap[type], type, AppPortMap[type]);
+    }
+    log.info('Service', 'All services started');
+    appBuilder.setReady();
+}
+
+if (!replicaTypes) {
+  init().catch(err => { log.error('', err); process.exit(1); });
+} else {
+  replicaInit(replicaTypes).catch(err => { log.error('', err); process.exit(1); });
+}
 
 
