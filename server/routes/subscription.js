@@ -37,7 +37,7 @@ const corsOptions = {
     methods: ['GET', 'POST'],
     optionsSuccessStatus: 200, // IE11 chokes on 204
     origin: (origin, callback) => {
-        if (originWhitelist.includes(origin)) {
+        if (typeof origin === "undefined" || originWhitelist.includes(origin)) {
             callback(null, true);
         } else {
             const err = new Error('Not allowed by CORS');
@@ -333,8 +333,11 @@ router.getAsync('/:cid/widget', cors(corsOptions), async (req, res) => {
         subscribeUrl: getPublicUrl(`subscription/${list.cid}/subscribe`),
         hasPubkey: !!configItems.pgpPrivateKey,
         customFields: await fields.forHbs(contextHelpers.getAdminContext(), list.id),
-        template: 'subscription/widget-subscribe.hbs',
-        layout: null,
+        template: {
+            template: 'subscription/widget-subscribe.hbs',
+            layout: null,
+            type: 'mjml'
+        }
     };
 
     await injectCustomFormData(req.query.fid || list.default_form, 'web_subscribe', data);
