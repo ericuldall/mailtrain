@@ -335,7 +335,7 @@ router.getAsync('/:cid/widget', cors(corsOptions), async (req, res) => {
         customFields: await fields.forHbs(contextHelpers.getAdminContext(), list.id),
         template: {
             template: 'subscription/widget-subscribe.hbs',
-            layout: 'subscription/layout.mjml.hbs',
+            layout: null,
             type: 'mjml'
         }
     };
@@ -346,8 +346,16 @@ router.getAsync('/:cid/widget', cors(corsOptions), async (req, res) => {
 
     const html = htmlRenderer(data);
 
-    cache.put(req.path, html, 30000); // ms
-    res.send(html);
+    const response = {
+        data: {
+            title: data.title,
+            cid: data.cid,
+            html
+        }
+    };
+
+    cache.put(req.path, response, 30000); // ms
+    res.status(200).json(response);
 });
 
 
