@@ -332,7 +332,6 @@ router.getAsync('/:cid/widget', cors(corsOptions), async (req, res) => {
         publicKeyUrl: getTrustedUrl('subscription/publickey'),
         subscribeUrl: getPublicUrl(`subscription/${list.cid}/subscribe`),
         hasPubkey: !!configItems.pgpPrivateKey,
-        csrfToken: req.csrfToken(),
         customFields: await fields.forHbs(contextHelpers.getAdminContext(), list.id),
         template: {
             template: 'subscription/widget-subscribe.hbs',
