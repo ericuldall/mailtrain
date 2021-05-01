@@ -336,7 +336,7 @@ router.getAsync('/:cid/widget', cors(corsOptions), async (req, res) => {
         customFields: await fields.forHbs(contextHelpers.getAdminContext(), list.id),
         template: {
             template: 'subscription/widget-subscribe.hbs',
-            layout: null,
+            layout: 'subscription/layout.mjml.hbs',
             type: 'mjml'
         }
     };
