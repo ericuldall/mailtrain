@@ -346,7 +346,7 @@ router.getAsync('/:cid/widget', cors(corsOptions), async (req, res) => {
 
     const html = htmlRenderer(data);
 
-    cache.put(req.path, response, 30000); // ms
+    cache.put(req.path, html, 30000); // ms
     res.send(html);
 });
 
